@@ -17,6 +17,7 @@
     "less": "^3.12.2",
     "less-loader": "^6.2.0",
     "nprogress": "^0.2.0",
+    "reqwest": "^2.0.5",
     "vue": "^2.6.11",
     "vue-awesome": "^4.1.0",
     "vue-router": "^3.2.0",

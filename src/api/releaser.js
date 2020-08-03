@@ -1,11 +1,11 @@
 import request from "../util/request"
 
-var statusData = {
-    ret_code = "",
-    msg = "",
-    status = 0,
-    step = 0,
-};
+// var statusData = {
+//     ret_code: "",
+//     msg: "",
+//     status: 0,
+//     step: 0,
+// };
 
 export default {
     getStatus(cb) {
@@ -14,11 +14,11 @@ export default {
             method: "get"
         }).then(response => {
             let res = response.data;
-            let stat = res.status
+            let stat = res.status;
             if (stat === 1){
-                res.status = "exception"
+                res.status = "exception";
             }
-            cb(res)
+            cb(res);
         })
     },
     getVersion(cb) {
@@ -27,7 +27,7 @@ export default {
             method: "get"
         }).then(response => {
             let res = response.data;
-            cb(res.version)
+            cb(res);
         })
     }
-}
+};

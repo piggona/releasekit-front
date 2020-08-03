@@ -13,7 +13,10 @@
                     Stage Version
                 </a-radio-button>
             </a-radio-group>
-            <div class="release-font">下一个版本：{{newVersion}}</div>
+            <div style="padding-top: 5%;">
+                <span class="release-font">即将发布版本：{{ ver }}</span>
+                <span class="release-font">下一个版本：{{newVersion}}</span>
+            </div>
         </div>
         
         <a-row class="btn-row">
@@ -78,7 +81,7 @@ export default {
             let sentence = ""
             switch(this.step) {
                 case 0:
-                    sentence = "0: 就绪，执行初始化";
+                    sentence = "0: 就绪";
                     break;
                 case 1:
                     sentence = "1: 初始化成功,在提交待发布版本";
@@ -88,6 +91,9 @@ export default {
                     break;
                 case 3:
                     sentence = "3: 执行goreleaser成功，在提交新版本信息";
+                    break;
+                case 4:
+                    sentence = "4: 结束，同步状态";
                     break;
                 default:
                     sentence = "0: 就绪";
@@ -118,7 +124,7 @@ export default {
             return version
         },
         percent() {
-            return this.step / 5
+            return 100 * (this.step / 5)
         }
     },
     methods: {
@@ -148,11 +154,19 @@ export default {
                     console.log(res)
                 }
             });
+        },
+        refreshStatus() {
+            this.$store.dispatch("releaser/getStatus");
         }
     },
     mounted() {
-        this.$store.commit("releaser/getStatus");
-        this.$store.commit("releaser/getVersion");
+        this.$store.dispatch("releaser/getStatus");
+        this.$store.dispatch("releaser/getVersion");
+    },
+    created() {
+        window.setInterval(() => {
+            setTimeout(this.refreshStatus,0)
+        },3000)
     }
 }
 </script>
