@@ -15,7 +15,7 @@ const router = new Router({
                 import(/* webpackChunkName: "releaser" */ "./layout/BasicLayout"),
             children: [
                 {
-                    path: "/release",
+                    path: "/",
                     name: "release",
                     component: ()=>
                         import(/* webpackChunkName: "releaser" */ "./views/Releaser/Release")

@@ -14,10 +14,6 @@ export default {
             method: "get"
         }).then(response => {
             let res = response.data;
-            let stat = res.status;
-            if (stat === 1){
-                res.status = "exception";
-            }
             cb(res);
         })
     },

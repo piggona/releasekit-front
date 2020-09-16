@@ -20,23 +20,12 @@
         </div>
         
         <a-row class="btn-row">
-            <a-col :span="16">
-                <a-button style="height: 30rem;font-size: 100px;padding: 5%;" class="release-btn" type="danger" @click="release" block>release</a-button>
+            <a-col :span="14">
+                <a-button style="height: 10rem;font-size: 30px;padding: 5%;" class="release-btn" type="danger" @click="release" :disabled="can_release" block>发布/重试</a-button>
             </a-col>
-            <a-col :span="8">
-                <a-button style="height: 2rem;" class="release-btn" type="primary" size="large" @click="init">Init</a-button>
-                <br/>
-                <div class="font">
-                    <a-icon type="arrow-up" />
-                    <div>重启任务</div>
-                </div>
-                <div class="font-publish"><a-icon type="arrow-left" />发布</div>
-                <div>
-                    <img src="../../assets/gkd.gif" alt="">
-                    <div class="font-color">点它！</div>
-                    <div class="font-color">点它！！</div>
-                    <div class="font-color">快点它！！!</div>
-                </div>
+            <a-col :span="4"></a-col>
+            <a-col :span="6">
+                <a-button style="height: 10rem;font-size: 30px" class="release-btn" type="primary" size="large" @click="init" block>重置任务</a-button>
             </a-col>
         </a-row>
         <div>
@@ -84,22 +73,31 @@ export default {
                     sentence = "0: 就绪";
                     break;
                 case 1:
-                    sentence = "1: 初始化成功,在提交待发布版本";
+                    sentence = "1: 初始化任务完成，初始化仓库";
                     break;
                 case 2:
-                    sentence = "2: 提交待发布版本成功，在执行goreleaser";
+                    sentence = "2: 初始化仓库成功，在提交待发布版本";
                     break;
                 case 3:
-                    sentence = "3: 执行goreleaser成功，在提交新版本信息";
+                    sentence = "3: 提交待发布版本成功，在执行goreleaser";
                     break;
                 case 4:
-                    sentence = "4: 结束，同步状态";
+                    sentence = "4: 执行goreleaser成功，生成新版本";
+                    break;
+                case 5:
+                    sentence = "5: 成功生成新版本，结束"
                     break;
                 default:
                     sentence = "0: 就绪";
                     break;
             }
             return sentence;
+        },
+        can_release() {
+            if (this.status === "normal" && this.step != 0) {
+                return true
+            }
+            return false
         },
         newVersion() {
             let version = "" 
@@ -133,6 +131,7 @@ export default {
             this.version_set = e.target.value
         },
         release() {
+            this.refreshVersion();
             reqwest({
                 url: "api/releaser/release/"+this.version_set,
                 type: "json",
@@ -145,9 +144,10 @@ export default {
             });
         },
         init() {
+            this.refreshVersion();
             reqwest({
                 url: "api/releaser/init/",
-                method: "get",
+                method: "post",
                 contentType: "application/json",
                 success: res => {
                     console.log('call init')
@@ -157,6 +157,9 @@ export default {
         },
         refreshStatus() {
             this.$store.dispatch("releaser/getStatus");
+        },
+        refreshVersion() {
+            this.$store.dispatch("releaser/getVersion");
         }
     },
     mounted() {
@@ -166,7 +169,10 @@ export default {
     created() {
         window.setInterval(() => {
             setTimeout(this.refreshStatus,0)
-        },3000)
+        },3000);
+        window.setInterval(() => {
+            setTimeout(this.refreshVersion,0)
+        },300000);
     }
 }
 </script>
